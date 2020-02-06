@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: dmoj\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-10 14:40+0000\n"
-"PO-Revision-Date: 2020-01-31 01:07\n"
+"POT-Creation-Date: 2020-02-06 04:01+0000\n"
+"PO-Revision-Date: 2020-02-06 04:03\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -2261,44 +2261,44 @@ msgstr ""
 msgid "%s Statistics"
 msgstr ""
 
-#: judge/views/contests.py:601
+#: judge/views/contests.py:608
 msgid "???"
 msgstr ""
 
-#: judge/views/contests.py:664
+#: judge/views/contests.py:671
 #, python-format
 msgid "%s Rankings"
 msgstr ""
 
-#: judge/views/contests.py:680
+#: judge/views/contests.py:687
 #, python-format
 msgid "Your participation in %s"
 msgstr ""
 
-#: judge/views/contests.py:681
+#: judge/views/contests.py:688
 #, python-format
 msgid "%s's participation in %s"
 msgstr ""
 
-#: judge/views/contests.py:685
+#: judge/views/contests.py:692
 msgid "Live"
 msgstr ""
 
-#: judge/views/contests.py:697 templates/contest/contest-tabs.html:16
+#: judge/views/contests.py:704 templates/contest/contest-tabs.html:16
 msgid "Participation"
 msgstr ""
 
-#: judge/views/contests.py:743
+#: judge/views/contests.py:750
 #, python-format
 msgid "%s MOSS Results"
 msgstr ""
 
-#: judge/views/contests.py:770
+#: judge/views/contests.py:777
 #, python-format
 msgid "Running MOSS for %s..."
 msgstr ""
 
-#: judge/views/contests.py:793
+#: judge/views/contests.py:800
 #, python-format
 msgid "Contest tag: %s"
 msgstr ""
