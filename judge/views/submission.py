@@ -98,7 +98,7 @@ def make_batch(batch, cases):
     return result
 
 
-TestCase = namedtuple('TestCase', 'id status is_combined')
+TestCase = namedtuple('TestCase', 'id status is_combined num_combined')
 
 
 def get_statuses(batch, cases):
@@ -115,8 +115,7 @@ def combine_statuses(status_cases):
     for key, group in groupby(status_cases, key=attrgetter('status')):
         group = list(group)
         if len(group) > 10:
-            # Generates "[status] [status] ... [status] [status]" except we keep the test case ids as well
-            ret.extend(group[:2] + [TestCase(id=None, status=key, is_combined=True)] + group[-2:])
+            ret.append(TestCase(id=None, status=key, is_combined=True, num_combined=len(group)))
         else:
             ret.extend(group)
     return ret
