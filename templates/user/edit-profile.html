@@ -133,6 +133,28 @@
             });
         });
     </script>
+    <script type="text/javascript">
+        $(function () {
+            $('#generate-scratch-codes-button').click(function (event) {
+                event.preventDefault();
+                if (confirm("{{ _('Are you sure you want to generate or regenerate a new set of scratch codes?') }}\n"
+                          + "{{ _('This will invalidate any previous scratch codes.') }} "
+                          + "{{ _('You will not be able to view your scratch codes after you leave this page!') }}")) {
+                    $('#scratch-codes').text("{{ _('Generating...') }}");
+
+                    $.ajax({
+                        type: 'POST',
+                        url: $(this).attr('href'),
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#scratch-codes').text(data.data.token);
+                            $('#generate-scratch-codes-button').text("{{ _('Regenerate') }}");
+                        },
+                    });
+                }
+            });
+        });
+    </script>
 {% endblock %}
 
 {% block title_ruler %}{% endblock %}
@@ -243,6 +265,20 @@
                                     {% endif %}
                                 </span></td>
                             </tr>
+                            {% if profile.is_totp_enabled %}
+                            <tr>
+                                <td colspan="2"><span class="inline-header">
+                                    {{ _('Scratch Codes:') }}
+                                    {% if profile.is_totp_enabled %}
+                                        <a id="generate-scratch-codes-button" href="{{ url('generate_scratch_codes') }}"
+                                           class="button inline-button">{{ _('Regenerate') }}</a>
+                                    {% else %}
+                                        <a id="generate-scratch-codes-button" href="{{ url('generate_scratch_codes') }}"
+                                           class="button inline-button">{{ _('Generate') }}</a>
+                                    {% endif %}
+                                </span></td>
+                            </tr>
+                            {% endif %}
                         </table>
                     </td>
                     <td>
