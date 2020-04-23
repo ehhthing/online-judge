@@ -163,7 +163,7 @@
                         dataType: 'json',
                         success: function(data) {
                             $('#scratch-codes').text(data.data.codes);
-                            $('scratch-codes-copy-button').attr('data-clipboard-text', data.data.codes);
+                            $('#scratch-codes-copy-button').attr('data-clipboard-text', data.data.codes);
                             $('#generate-scratch-codes-button').text("{{ _('Regenerate') }}");
                             $('#scratch-codes-text').text("{{ _('Below is a list of one-time use scratch codes.') }} "
                                                         + "{{ _('These codes can only be used once and are for emergency use.') }} "
@@ -188,9 +188,10 @@
                     }
                     var copyButton;
                     $('pre code').each(function () {
-                        $(this).parent().before($('<div>', {'class': 'copy-clipboard', 'id': 'scratch-codes-copy-button'})
+                        $(this).parent().before($('<div>', {'class': 'copy-clipboard'})
                             .append(copyButton = $('<span>', {
                                 'class': 'btn-clipboard',
+                                'id': 'scratch-codes-copy-button',
                                 'data-clipboard-text': '',
                                 'title': 'Click to copy'
                             }).text('Copy')));
