@@ -1,5 +1,6 @@
 from operator import attrgetter
 
+import json
 import pyotp
 from django import forms
 from django.conf import settings
@@ -129,14 +130,31 @@ class TOTPForm(Form):
     totp_token = NoAutoCompleteCharField(validators=[
         RegexValidator('^[0-9]{6}$', _('Two Factor Authentication tokens must be 6 decimal digits.')),
     ])
+    scratch_code = NoAutoCompleteCharField(validators=[
+        RegexValidator('^[A-Z2-7]{16}$', _('Scratch codes must be 16 decimal digits.')),
+    ])
 
     def __init__(self, *args, **kwargs):
         self.totp_key = kwargs.pop('totp_key')
+        self.scratch_codes = json.loads(kwargs.pop('scratch_codes'))
+        self.profile = kwargs.pop('profile')
         super(TOTPForm, self).__init__(*args, **kwargs)
+        self.fields['totp_token'].required = False
+        self.fields['scratch_code'].required = False
 
-    def clean_totp_token(self):
-        if not pyotp.TOTP(self.totp_key).verify(self.cleaned_data['totp_token'], valid_window=self.TOLERANCE):
+    def clean(self):
+        super(TOTPForm, self).clean()
+        totp_token = self.cleaned_data.get('totp_token')
+        scratch_code = self.cleaned_data.get('scratch_code')
+        if totp_token and scratch_code:
+            raise ValidationError(_('Enter only the 6-digit code or one of your scratch codes'))
+        if not scratch_code and not pyotp.TOTP(self.totp_key).verify(totp_token, valid_window=self.TOLERANCE):
             raise ValidationError(_('Invalid Two Factor Authentication token.'))
+        if not totp_token and scratch_code in self.scratch_codes:
+            self.profile.scratch_codes = json.dumps(self.scratch_codes.remove(scratch_code))
+            self.profile.save()
+        elif scratch_code:
+            raise ValidationError(_('Invalid Scratch code.'))
 
 
 class ProblemCloneForm(Form):

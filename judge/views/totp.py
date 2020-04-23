@@ -1,6 +1,7 @@
 import base64
 from io import BytesIO
 
+import json
 import pyotp
 import qrcode
 from django.conf import settings
@@ -22,6 +23,8 @@ class TOTPView(TitleMixin, LoginRequiredMixin, FormView):
     def get_form_kwargs(self):
         result = super(TOTPView, self).get_form_kwargs()
         result['totp_key'] = self.profile.totp_key
+        result['scratch_codes'] = self.profile.scratch_codes
+        result['profile'] = self.profile
         return result
 
     def dispatch(self, request, *args, **kwargs):
@@ -47,6 +50,9 @@ class TOTPEnableView(TOTPView):
         if not profile.totp_key:
             profile.totp_key = pyotp.random_base32(length=32)
             profile.save()
+        if not profile.scratch_codes:
+            profile.scratch_codes = json.dumps([pyotp.random_base32(length=16) for i in range(5)])
+            profile.save()
         return self.render_to_response(self.get_context_data())
 
     def check_skip(self):
@@ -60,6 +66,7 @@ class TOTPEnableView(TOTPView):
     def get_context_data(self, **kwargs):
         context = super(TOTPEnableView, self).get_context_data(**kwargs)
         context['totp_key'] = self.profile.totp_key
+        context['scratch_codes'] = '\n'.join(json.loads(self.profile.scratch_codes))
         context['qr_code'] = self.render_qr_code(self.request.user.username, self.profile.totp_key)
         return context
 
@@ -97,6 +104,7 @@ class TOTPDisableView(TOTPView):
     def form_valid(self, form):
         self.profile.is_totp_enabled = False
         self.profile.totp_key = None
+        self.profile.scratch_codes = None
         self.profile.save()
         return self.next_page()
 

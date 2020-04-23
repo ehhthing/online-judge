@@ -1,7 +1,7 @@
 import base64
 import json
 import hmac
-import os
+import pyotp
 import secrets
 import struct
 from operator import mul
@@ -125,10 +125,10 @@ class Profile(models.Model):
                                                             _('API token must be None or hexadecimal'))])
     notes = models.TextField(verbose_name=_('internal notes'), null=True, blank=True,
                              help_text=_('Notes for administrators regarding this user.'))
-    scratch_codes = EncryptedNullCharField(max_length=32, null=True, verbose_name=_('Scratch Codes'),
-                                           help_text=_('32 character base32-encoded key for TOTP'),
-                                           validators=[RegexValidator('^$|^[A-Z2-7]{32}$',
-                                                                 _('TOTP key must be empty or base32'))])
+    scratch_codes = EncryptedNullCharField(max_length=255, null=True, blank=True, verbose_name=_('Scratch Codes'),
+                                           help_text=_('JSON of 16 character base32-encoded codes for scratch codes'),
+                                           validators=[RegexValidator('^[A-Z2-7]$',
+                                                                      _('Scratch codes must be empty or base32'))])
 
     @cached_property
     def organization(self):
@@ -177,11 +177,10 @@ class Profile(models.Model):
     generate_api_token.alters_data = True
 
     def generate_scratch_codes(self):
-        codes = [base64.urlsafe_b64encode(os.urandom(12)).decode('utf-8') for i in range(5)]
-        jsonCodes = json.dumps(codes)
-        self.scratch_codes = hmac.new(force_bytes(settings.SECRET_KEY), msg=jsonCodes, digestmod='sha256').hexdigest()
+        codes = [pyotp.random_base32(length=16) for i in range(5)]
+        self.scratch_codes = json.dumps(codes)
         self.save(update_fields=['scratch_codes'])
-        return codes
+        return '\n'.join(codes)
 
     generate_scratch_codes.alters_data = True
 

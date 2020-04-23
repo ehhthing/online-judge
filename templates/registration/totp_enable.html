@@ -42,10 +42,15 @@
             image-rendering: -moz-crisp-edges;
             image-rendering: crisp-edges;
         }
+
+        .scratch-codes {
+            white-space: pre-line;
+        }
     </style>
 {% endblock %}
 
 {% block js_media %}
+    {% include "common-content.html" %}
     <script>
         $(function () {
             if (window.navigator.userAgent.indexOf('Edge') >= 0) {
@@ -84,6 +89,15 @@
                 <span class="fullwidth">{{ form.totp_token }}</span>
             </div>
             <button style="margin-top: 0.5em" class="button" type="submit">{{ _('Enable Two Factor Authentication') }}</button>
+            <div class="scratch-codes">
+                <label class="inline-header grayed">{{ _('Below is a list of one-time use scratch codes. 
+                                                          These codes can only be used once and are for emergency use.
+                                                          You can use these codes to login to your account or disable two factor authentication.
+                                                          If you ever need more scratch codes, you can regenerate them on the edit profile tab.
+                                                          Please write these down and keep them in a secure location.
+                                                          These codes will never be shown again after you enable two factor authentication.') }}</label>
+                <span class="fullwidth">{{ scratch_codes }}</span>
+            </div>
         </form>
     </div>
 {% endblock %}

@@ -288,7 +288,7 @@ def generate_scratch_codes(request):
     with transaction.atomic(), revisions.create_revision():
         revisions.set_user(request.user)
         revisions.set_comment(_('Generated scratch codes for user'))
-    return JsonResponse({'data': {'token': profile.generate_scratch_codes()}})
+    return JsonResponse({'data': {'codes': profile.generate_scratch_codes()}})
 
 
 @require_POST
